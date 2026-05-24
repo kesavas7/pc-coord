@@ -148,8 +148,33 @@ public:
 
 template <typename KeyType, typename ValueType>
 LinkedList<KeyType, ValueType>::LinkedList()
-    : head(nullptr), n(0) {}
-    
+    : head(nullptr), n(0) {}  // empty linked list pointing to initial position is created
+
+template <typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>::~LinkedList() {
+    clear();
+}
+template<typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>::LinkedList(const LinkedList &other)
+    : head(nullptr), n(0) {
+        Node* curr=other.head; // used to define the first node in the old list nd curr is the pointer to the current node
+        Node* tail=nullptr;   //used to define the last node in the new list
+        while (curr) {
+            Node* node=new Node; //allocates memory
+            node->key=curr->key; //copies everything
+            node->value=curr->value;
+            node->next=nullptr;
+            if (!head) {
+                head=node;
+                tail=node;
+            }   else {
+                tail->next = node; //add on another node
+                tail = node;    // changes the tail to it
+            }
+            curr = curr->next;
+            n++
+        }
+    }
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
 
