@@ -175,6 +175,40 @@ LinkedList<KeyType, ValueType>::LinkedList(const LinkedList &other)
             n++
         }
     }
+template<typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>::LinkedList(LinkedList &&other) noexcept
+    template<typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>::LinkedList(LinkedList &&other) noexcept
+    : head(other.head), n(other.n) {  // copies head pointer and size
+    other.head = nullptr;    //empties old pointer and size
+    other.n = 0;
+}
+
+template<typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>&
+LinkedList<KeyType, ValueType>::operator=(const LinkedList &other){
+    if(this != &other){  // this is a pointer to the object cuurently and if this != other then cuurent node cleared
+        clear();
+        Node* curr = other.head; //then used copy as previous
+        Node* tail = nullptr;
+        while(curr){
+            Node* node = new Node;
+            node->key = curr->key;
+            node->value = curr->value;
+            node->next = nullptr;
+            if(!head){
+                head = node;
+                tail = node;
+            } else {
+                tail->next = node;
+                tail = node;
+            }
+            curr = curr->next;
+            n++;
+        }
+    } 
+    return *this;
+}
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
 
