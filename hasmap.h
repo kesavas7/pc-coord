@@ -135,7 +135,7 @@ public:
     [[nodiscard]] size_t size() const;
 
 private:
-    mutable HashFunc hash;
+    HashFunc hash;
     using Bucket = LinkedList<KeyType, ValueType>;
     Bucket buckets[N];
 };
@@ -158,7 +158,6 @@ LinkedList<KeyType, ValueType>::~LinkedList() {
 template<typename KeyType, typename ValueType>
 LinkedList<KeyType, ValueType>::LinkedList(const LinkedList &other)
     : head(nullptr), n(0) {
-        n=0;
         Node* curr=other.head; // used to define the first node in the old list nd curr is the pointer to the current node
         Node* tail=nullptr;   //used to define the last node in the new list
         while (curr) {
@@ -189,7 +188,6 @@ LinkedList<KeyType, ValueType>&
 LinkedList<KeyType, ValueType>::operator=(const LinkedList &other){
     if(this != &other){  // (this) is a pointer to the object cuurently, and if this != other then the cuurent node cleared
         clear();
-        n=0;
         Node* curr = other.head; //then used copy as previous
         Node* tail = nullptr;
         while(curr){
@@ -229,13 +227,17 @@ void LinkedList<KeyType, ValueType>::insert(
     const ValueType &value
 ){
     Node* curr = head;
-    while(curr){    // if node exists with a specific pointer then nothing happens
+    while(curr){    // if node exists with a specific pointer then its value is updated
         if(curr->key == key){
+            curr->value = value;
             return;
         }
         curr = curr->next;
     }
-    Node* node = new Node{key, value, head};  //else new node is created more safe approach ig
+    Node* node = new Node;  //else new node is created
+    node->key = key;
+    node->value = value;
+    node->next = head;
     head = node; //new node is added at the beginning
     n++;
 }
@@ -319,7 +321,7 @@ template<typename KeyType, typename ValueType>
 bool LinkedList<KeyType, ValueType>::contains(  //checks if a key is present or not
     const KeyType &key  
 ) const {
-    const Node* curr = head;
+    Node* curr = head;
     while(curr){
         if(curr->key == key){
             return true;
@@ -365,12 +367,13 @@ HashMap<N, KeyType, ValueType, HashFunc>::~HashMap() {
 }
 template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
 HashMap<N, KeyType, ValueType, HashFunc>&
-HashMap<N, KeyType, ValueType, HashFunc>::operator=(const HashMap &other)
-{
-    if(this != &other){
+HashMap<N, KeyType, ValueType, HashFunc>::operator=(
+    const HashMap &other
+){
+    if(this != &other){ //overwrites the content of the something if pointers are not equal
         clear();
         for(size_t i = 0; i < N; i++){
-            buckets[i] = other.buckets[i]; // uses LinkedList operator=
+            buckets[i] = other.buckets[i];
         }
     }
     return *this;
@@ -480,10 +483,7 @@ bool HashMap<N, KeyType, ValueType, HashFunc>::operator!=(
 
 template<>  //so since we are only using a fixed type, template is made empty
 size_t HashFunctor<int>::operator()(int key) const {
-    if(key < 0){
-        return static_cast<size_t>(-(long long)key);
-    }
-    return static_cast<size_t>(key);
+    return static_cast<size_t>(key);    //key is changed to size_t which is used for indices
 }
 template<>
 size_t HashFunctor<float>::operator()(float key) const {
@@ -493,8 +493,8 @@ template<>
 size_t HashFunctor<std::string>::operator()(std::string key) const {
     size_t hash = 0;
     for(char c : key){
-        hash = hash * 31u + static_cast<size_t>(static_cast<unsigned char>(c)); //we use 31 but not 26 :( bcoz 31 is both odd and prime and greater than 26
-    }       //newly added thing unsigned static case made it from 0-255
+        hash = hash * 31 + c;      //we use 31 but not 26 :( bcoz 31 is both odd and prime and greater than 26
+    }
     return hash;
 }
 
