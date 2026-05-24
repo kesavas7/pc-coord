@@ -135,7 +135,7 @@ public:
     [[nodiscard]] size_t size() const;
 
 private:
-    mutable HashFunc hash;
+    HashFunc hash;
     using Bucket = LinkedList<KeyType, ValueType>;
     Bucket buckets[N];
 };
@@ -229,8 +229,9 @@ void LinkedList<KeyType, ValueType>::insert(
     const ValueType &value
 ){
     Node* curr = head;
-    while(curr){    // if node exists with a specific pointer then nothing happens
+    while(curr){    // if node exists with a specific pointer then its value is updated
         if(curr->key == key){
+            curr->value = value;
             return;
         }
         curr = curr->next;
@@ -319,7 +320,7 @@ template<typename KeyType, typename ValueType>
 bool LinkedList<KeyType, ValueType>::contains(  //checks if a key is present or not
     const KeyType &key  
 ) const {
-    const Node* curr = head;
+    Node* curr = head;
     while(curr){
         if(curr->key == key){
             return true;
