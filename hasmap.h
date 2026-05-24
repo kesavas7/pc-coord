@@ -348,7 +348,88 @@ bool LinkedList<KeyType, ValueType>::operator!=(
 }
 
 ////hasmap less gooo
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+HashMap<N, KeyType, ValueType, HashFunc>::HashMap() {}  //constructor
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+HashMap<N, KeyType, ValueType, HashFunc>::~HashMap() {
+    clear();    //destructor
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+HashMap<N, KeyType, ValueType, HashFunc>&
+HashMap<N, KeyType, ValueType, HashFunc>::operator=(
+    const HashMap &other
+){
+    if(this != &other){ //overwrites the content of the something if pointers are not equal
+        clear();
+        for(size_t i = 0; i < N; i++){
+            buckets[i] = other.buckets[i];
+        }
+    }
+    return *this;
+}
 
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+HashMap<N, KeyType, ValueType, HashFunc>&
+HashMap<N, KeyType, ValueType, HashFunc>::operator=(
+    HashMap &&other
+) noexcept {
+    if(this != &other){
+        clear();    //transfers ownership of old to new, ie old becomes empty
+        for(size_t i = 0; i < N; i++){
+            buckets[i] = std::move(other.buckets[i]);
+        }
+    }
+    return *this;
+}
+
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+void HashMap<N, KeyType, ValueType, HashFunc>::insert(
+    const KeyType &key,
+    const ValueType &value
+){
+    size_t idx = hash(key) % N; //here is where our implementation starts id of a key is defined by hash function and then taking modulo
+    buckets[idx].insert(key, value);
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+void HashMap<N, KeyType, ValueType, HashFunc>::erase(
+    const KeyType &key
+){
+    size_t idx = hash(key) % N; //here id is found and then erased from bucket
+    buckets[idx].erase(key);
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+void HashMap<N, KeyType, ValueType, HashFunc>::clear(){
+    for(size_t i = 0; i < N; i++){
+        buckets[i].clear(); // here everything in the bucket is cleared
+    }
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+const ValueType&
+HashMap<N, KeyType, ValueType, HashFunc>::at(
+    const KeyType &key
+) const {
+    size_t idx = hash(key) % N;  //here the id is found and returns the value
+    return buckets[idx].at(key);
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+ValueType&
+HashMap<N, KeyType, ValueType, HashFunc>::at(
+    const KeyType &key  //same as previous but returns const
+){
+    size_t idx = hash(key) % N;
+    return buckets[idx].at(key);
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+ValueType&
+HashMap<N, KeyType, ValueType, HashFunc>::operator[](
+    const KeyType &key  //
+){
+    size_t idx = hash(key) % N;
+    if(!buckets[idx].contains(key)){    //if key is not found a new key-value pair is added
+        buckets[idx].insert(key, ValueType());
+    }
+    return buckets[idx].at(key);    //else value is returned
+}
 
 
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
