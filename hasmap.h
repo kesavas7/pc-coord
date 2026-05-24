@@ -91,6 +91,7 @@ public:
 
     const ValueType &at(const KeyType &key) const;
     ValueType &at(const KeyType &key);
+    const ValueType *find(const KeyType &key) const;
     ValueType *find(const KeyType &key);
 
     bool operator==(const LinkedList &other) const;
@@ -172,7 +173,7 @@ LinkedList<KeyType, ValueType>::LinkedList(const LinkedList &other)
                 tail = node;    // changes the tail to it
             }
             curr = curr->next;
-            n++
+            n++;
         }
     }
 template<typename KeyType, typename ValueType>
@@ -272,32 +273,42 @@ void LinkedList<KeyType, ValueType>::clear(){
 }
 
 template<typename KeyType, typename ValueType>
+const ValueType* LinkedList<KeyType, ValueType>::find(const KeyType &key) const{
+    const Node* curr = head;   //checks if key is there and returns its pointer
+    while(curr){
+        if(curr->key == key){
+            return &(curr->value);
+        }
+        curr = curr->next;
+    }
+    return nullptr; //key not found
+}
+template<typename KeyType, typename ValueType>
 ValueType* LinkedList<KeyType, ValueType>::find(const KeyType &key){
     Node* curr = head;
     while(curr){
         if(curr->key == key){
-            return &(curr->value); //gives the pointer
+            return &(curr->value);
         }
         curr = curr->next;
     }
-    return nullptr; //gives nothing if not found
+    return nullptr;
 }
+
 template<typename KeyType, typename ValueType>
-const ValueType& LinkedList<KeyType, ValueType>::at(
-    const KeyType &key  //returns a const value which cant be modified
-) const {
+ValueType& LinkedList<KeyType, ValueType>::at(const KeyType &key){ //returns a value which can be modified
     Node* curr = head;
     while(curr){
-        if(curr->key == key){  //key is checked and value is returned
+        if(curr->key == key){
             return curr->value;
         }
         curr = curr->next;
     }
-    throw std::out_of_range("Key is not there gng");  //key not found error is raised
+    throw std::out_of_range("Key not found");
 }
 template<typename KeyType, typename ValueType>
-ValueType& LinkedList<KeyType, ValueType>::at(const KeyType &key){ //returns a value which can be modified
-    Node* curr = head;
+const ValueType& LinkedList<KeyType, ValueType>::at(const KeyType &key) const {
+    const Node* curr = head;
     while(curr){
         if(curr->key == key){
             return curr->value;
@@ -332,7 +343,7 @@ bool LinkedList<KeyType, ValueType>::operator==(  //checks if two linked lists a
     }
     Node* curr = head;
     while(curr){
-        ValueType* val = other.find(curr->key);
+        const ValueType* val = other.find(curr->key);
         if(!val || *val != curr->value){  //two conditions with or not val and values not becoming equal
             return false;
         }
@@ -470,6 +481,23 @@ bool HashMap<N, KeyType, ValueType, HashFunc>::operator!=(
     return !(*this == other);
 }
 
+template<>  //so since we are only using a fixed type, template is made empty
+size_t HashFunctor<int>::operator()(int key) const {
+    return static_cast<size_t>(key);    //key is changed to size_t which is used for indices
+}
+template<>
+size_t HashFunctor<float>::operator()(float key) const {
+    return static_cast<size_t>(key * 1000);     //now done for float values
+}
+template<>
+size_t HashFunctor<std::string>::operator()(std::string key) const {
+    size_t hash = 0;
+    for(char c : key){
+        hash = hash * 31 + c;      //we use 31 but not 26 :( bcoz 31 is both odd and prime and greater than 26
+    }
+    return hash;
+}
+
 
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
@@ -477,27 +505,26 @@ bool HashMap<N, KeyType, ValueType, HashFunc>::operator!=(
 
 
 // ---------- UnComment the macros as you go on, this allows for partial submissions ----------///
-// #define TEST_CASE_1
-// #define TEST_CASE_2
-// #define TEST_CASE_3
-// #define TEST_CASE_4
-// #define TEST_CASE_5
-// #define TEST_CASE_6
-// #define TEST_CASE_7
-// #define TEST_CASE_8
-// #define TEST_CASE_9
-// #define TEST_CASE_10
-// #define TEST_CASE_11
-// #define TEST_CASE_12
-// #define TEST_CASE_13
-// #define TEST_CASE_14
-// #define TEST_CASE_15
-// #define TEST_CASE_16
-// #define TEST_CASE_17
-// #define TEST_CASE_18
-// #define TEST_CASE_19
-// #define TEST_CASE_20
-
+#define TEST_CASE_1
+#define TEST_CASE_2
+#define TEST_CASE_3
+#define TEST_CASE_4
+#define TEST_CASE_5
+#define TEST_CASE_6
+#define TEST_CASE_7
+#define TEST_CASE_8
+#define TEST_CASE_9
+#define TEST_CASE_10
+#define TEST_CASE_11
+#define TEST_CASE_12
+#define TEST_CASE_13
+#define TEST_CASE_14
+#define TEST_CASE_15
+#define TEST_CASE_16
+#define TEST_CASE_17
+#define TEST_CASE_18
+#define TEST_CASE_19
+#define TEST_CASE_20
 ///---------------------- DO NOT TOUCH/MODIFY BELOW THIS LINE, IT'S FOR HACKERRANK TESTING ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
 
