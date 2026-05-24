@@ -177,8 +177,6 @@ LinkedList<KeyType, ValueType>::LinkedList(const LinkedList &other)
     }
 template<typename KeyType, typename ValueType>
 LinkedList<KeyType, ValueType>::LinkedList(LinkedList &&other) noexcept
-    template<typename KeyType, typename ValueType>
-LinkedList<KeyType, ValueType>::LinkedList(LinkedList &&other) noexcept
     : head(other.head), n(other.n) {  // copies head pointer and size
     other.head = nullptr;    //empties old pointer and size
     other.n = 0;
@@ -249,7 +247,7 @@ void LinkedList<KeyType, ValueType>::erase(const KeyType &key){
     while(curr){
         if(curr->key == key){
             if(prev){
-                prev->next = curr->next; //key is checked and two cases are checked
+                prev->next = curr->next; //key is checked and two cases are checked and then terminated
             } else {
                 head = curr->next;
             }
@@ -261,6 +259,97 @@ void LinkedList<KeyType, ValueType>::erase(const KeyType &key){
         curr = curr->next;
     }
 }
+template<typename KeyType, typename ValueType>
+void LinkedList<KeyType, ValueType>::clear(){
+    Node* curr = head;  //deletes the linked list
+    while(curr){
+        Node* temp = curr;
+        curr = curr->next;
+        delete temp;
+    }
+    head = nullptr;
+    n = 0;
+}
+
+template<typename KeyType, typename ValueType>
+ValueType* LinkedList<KeyType, ValueType>::find(const KeyType &key){
+    Node* curr = head;
+    while(curr){
+        if(curr->key == key){
+            return &(curr->value); //gives the pointer
+        }
+        curr = curr->next;
+    }
+    return nullptr; //gives nothing if not found
+}
+template<typename KeyType, typename ValueType>
+const ValueType& LinkedList<KeyType, ValueType>::at(
+    const KeyType &key  //returns a const value which cant be modified
+) const {
+    Node* curr = head;
+    while(curr){
+        if(curr->key == key){  //key is checked and value is returned
+            return curr->value;
+        }
+        curr = curr->next;
+    }
+    throw std::out_of_range("Key is not there gng");  //key not found error is raised
+}
+template<typename KeyType, typename ValueType>
+ValueType& LinkedList<KeyType, ValueType>::at(const KeyType &key){ //returns a value which can be modified
+    Node* curr = head;
+    while(curr){
+        if(curr->key == key){
+            return curr->value;
+        }
+        curr = curr->next;
+    }
+    throw std::out_of_range("Key not found");
+}
+template<typename KeyType, typename ValueType>
+bool LinkedList<KeyType, ValueType>::contains(  //checks if a key is present or not
+    const KeyType &key  
+) const {
+    Node* curr = head;
+    while(curr){
+        if(curr->key == key){
+            return true;
+        }
+        curr = curr->next;
+    }
+    return false;
+}
+template<typename KeyType, typename ValueType>
+size_t LinkedList<KeyType, ValueType>::size() const {
+    return n;
+}
+template<typename KeyType, typename ValueType>
+bool LinkedList<KeyType, ValueType>::operator==(  //checks if two linked lists are identical
+    const LinkedList &other
+) const {
+    if(n != other.n){
+        return false;
+    }
+    Node* curr = head;
+    while(curr){
+        ValueType* val = other.find(curr->key);
+        if(!val || *val != curr->value){  //two conditions with or not val and values not becoming equal
+            return false;
+        }
+        curr = curr->next;
+    }
+    return true;
+}
+template<typename KeyType, typename ValueType>
+bool LinkedList<KeyType, ValueType>::operator!=(
+    const LinkedList &other
+) const {
+    return !(*this == other); //uses == operator and flips it
+}
+
+////hasmap less gooo
+
+
 
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
