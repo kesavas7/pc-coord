@@ -187,7 +187,7 @@ LinkedList<KeyType, ValueType>::LinkedList(LinkedList &&other) noexcept
 template<typename KeyType, typename ValueType>
 LinkedList<KeyType, ValueType>&
 LinkedList<KeyType, ValueType>::operator=(const LinkedList &other){
-    if(this != &other){  // this is a pointer to the object cuurently and if this != other then cuurent node cleared
+    if(this != &other){  // (this) is a pointer to the object cuurently, and if this != other then the cuurent node cleared
         clear();
         Node* curr = other.head; //then used copy as previous
         Node* tail = nullptr;
@@ -209,6 +209,59 @@ LinkedList<KeyType, ValueType>::operator=(const LinkedList &other){
     } 
     return *this;
 }
+template<typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>&
+LinkedList<KeyType, ValueType>::operator=(LinkedList &&other) noexcept {
+    if(this != &other){  // explained used when to move contents of b to a but a alreaddy has contents
+        clear();        // so a is cleared and then move constructor is used
+        head = other.head;
+        n = other.n;
+        other.head = nullptr;
+        other.n = 0;
+    }
+    return *this;  // returns the modified one
+}
+
+template<typename KeyType, typename ValueType>
+void LinkedList<KeyType, ValueType>::insert(
+    const KeyType &key,
+    const ValueType &value
+){
+    Node* curr = head;
+    while(curr){    // if node exists with a specific pointer then its value is updated
+        if(curr->key == key){
+            curr->value = value;
+            return;
+        }
+        curr = curr->next;
+    }
+    Node* node = new Node;  //else new node is created
+    node->key = key;
+    node->value = value;
+    node->next = head;
+    head = node; //new node is added at the beginning
+    n++;
+}
+template<typename KeyType, typename ValueType>
+void LinkedList<KeyType, ValueType>::erase(const KeyType &key){
+    Node* curr = head;
+    Node* prev = nullptr;
+    while(curr){
+        if(curr->key == key){
+            if(prev){
+                prev->next = curr->next; //key is checked and two cases are checked
+            } else {
+                head = curr->next;
+            }
+            delete curr;
+            n--;
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
 
