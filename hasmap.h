@@ -431,6 +431,45 @@ HashMap<N, KeyType, ValueType, HashFunc>::operator[](
     return buckets[idx].at(key);    //else value is returned
 }
 
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+bool HashMap<N, KeyType, ValueType, HashFunc>::contains(
+    const KeyType &key
+) const {
+    size_t idx = hash(key) % N;
+    return buckets[idx].contains(key);  //here we use the linked list function and check if bucket contains key or not
+}
+
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+bool HashMap<N, KeyType, ValueType, HashFunc>::empty() const {
+    return size() == 0; //gives True if size 0
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+size_t HashMap<N, KeyType, ValueType, HashFunc>::size() const {
+    size_t total = 0;   //gives the total size of bucket
+    for(size_t i = 0; i < N; i++){
+        total += buckets[i].size();
+    }
+    return total;
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+bool HashMap<N, KeyType, ValueType, HashFunc>::operator==(
+    const HashMap &other
+) const {
+    for(size_t i = 0; i < N; i++){  //checks if two hashmaps are the same
+
+        if(buckets[i] != other.buckets[i]){
+            return false;
+        }
+    }
+    return true;
+}
+template<size_t N, typename KeyType, typename ValueType, typename HashFunc>
+bool HashMap<N, KeyType, ValueType, HashFunc>::operator!=(
+    const HashMap &other        //uses not == function
+) const {
+    return !(*this == other);
+}
+
 
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
