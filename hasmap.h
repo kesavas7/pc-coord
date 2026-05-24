@@ -145,6 +145,11 @@ public:
     size_t operator()(T Key) const;
 };
 
+
+template <typename KeyType, typename ValueType>
+LinkedList<KeyType, ValueType>::LinkedList()
+    : head(nullptr), n(0) {}
+    
 ///---------------------- DO NOT TOUCH/MODIFY ABOVE THIS LINE, IT'S FOR YOUR REFERENCE ----------------------///
 ///------------------ IF YOU DO SO THE CURSE OF KING MIDUS WILL TURN IT INTO BROKEN CODE :P------------------///
 
